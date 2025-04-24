@@ -201,6 +201,7 @@ We identified the following requirements for this project:
   N/A
 ```
 
+
 | P06-01  | Calculate lapse rates  
 |---------|------------| 
 | Priority | Medium |
@@ -220,17 +221,66 @@ We identified the following requirements for this project:
   def test_lapse_rates_calc():
 
     # Test 700-500 mb lapse rate calculation when given Z in km and T in degrees C 
-
     lr75 = -(T700 * units.degC - T500 * units.degC) / (Z700 * unit.km - Z500* units.km) 
-
     assert_almost_equal(lr75, -8.25 * units.degC/km) 
 
     # Test 2-5 km lapse rate calculation when given Z in km and T in degrees Celsius         
-
     lr25km = -(T_2km* units.degC – T_5km* units.degC) / (2 * units.km – 5* units.km) 
 
     print(“All tests have been passed”) 
 ```
 
+
+| P07-01  | Calculate temperatures at various pressure levels  
+|---------|------------| 
+| Priority | Medium |
+| Sprint | 1 |
+| Assigned To | Margo and Cait |
+| User Story   | As developers, we need to calculate temperatures at multiple pressure levels in the atmosphere (e.g., 1000, 900, 850 mb), to be used as predictors in our ML model. |                                                                                                                                       | 
+| Requirements | |
+| | 1. Use ERA5 temperature and pressure data. |
+| | 2. Must account for the fact that at some locations in the high terrain certain pressure surfaces will be below surface.|
+| | 3. Temperatures are calculated in terms of degrees Celsius.|
+| Acceptance Criteria | |
+| | 1. The only data used in the calculation is ERA5 temperature and pressure data.|
+| | 2. Identifies locations where certain pressure surfaces are below the surface and sets them equal to nan.|
+| | 3. Temperatures must be given in degrees Celsius. |
+| Unit Test | | 
+```
+  def test_temp_at_p_levels(): 
+  
+    # Test calculation of 700 mb temperature at various pressure levels given temperature in Kelvin and pressure in Pascals 
+    T500 = vinterp3d.dinterp3dz(T * units.degC, p*units.Pa , 700.) 
+    
+    # Set any location where 700 mb is below ground to np.nan 
+    T700[Z700<0.] = np.nan 
+    assert_almost_equal(T700, 284.15 * units.Kelvin) 
+```
+
+
+| P08-01  | Calculate potential temperature at model levels 
+|---------|------------| 
+| Priority | Medium |
+| Sprint | 1 |
+| Assigned To | Margo and Cait |
+| User Story   | As developers, we need to calculate potential temperatures at the ERA5 model levels, so that we can calculate potential temperature at select pressure levels/layers to be used as predictors in our ML model. |                                                                                                                                       | 
+| Requirements | |
+| | 1. Use temperature and pressure data from ERA5 dataset. |
+| | 2. Temperature must be given in Kelvin, and pressure must be given in Pascals. |
+| | 3. Use MetPy to calculate potential temperatures.|
+| | 4. The resulting temperature is Kelvin. |
+| Acceptance Criteria | |
+| | 1. Must use ERA5 temperature and pressure data. |
+| | 2. Temperature and pressure are verified to have correct units. |
+| | 3. MetPy successfully calculates potential temperatures without an error. |
+| | 4. Temperatures are verified to be in terms of Kelvin using unit tests. |
+| Unit Test | | 
+```
+  def test_potential_temp_calc(): 
+  
+    # Test potential temperature calculation given temp in Kelvin and pressure in Pa 
+    theta = mpcalc.potential_temperature(p * units.Pa, T * units.Kelvin) 
+    assert_almost_equal(theta, 295.88 * units.Kelvin, 1) 
+```
 
 
