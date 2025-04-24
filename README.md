@@ -1,6 +1,6 @@
 # Identification of the Elevated Mixed Layer Using a Random Forest Classifier
 
-Authors: Margo Andrews, Mackenzie Garrett, and Caitlin Roufa
+Authors: Margo Andrews, Caitlin Roufa, and Mackenzie Garrett
 
 ## I. Introduction and Background
 
@@ -21,6 +21,9 @@ Data for this project were produced using the European Center for Medium-Range W
 
 Output from this algorithm includes a binary dataset, with values of 1 indicating an EML at a particular time and location, and values of 0 indicating no EML. Using the binary dataset as the label, the machine learning algorithm predicts which class (EML or no EML) a particular grid point belongs to using meteorological variables and parameters calculated with the same ERA5 hybrid-sigma level data (Table 1). Given limitations including computational resources and time, we limit the temporal time frame of the study to the 2012-2021 period, using 6-hourly data from the month of May, when EMLs are most frequent (e.g., Lanicci and Warner 1991). Our domain consists of the central CONUS (Fig. 1), covering the region where the greatest number of EMLs typically occur (e.g., Riberio and Bosart 2018; Andrews et al. 2024). 
 
+![study area domain](images/domain.png)
+> Figure 1. The study domain, indicated by the red box. 
+
 Machine learning algorithms have been explored for use with gridded meteorological data. Random forest classifiers have been shown to be skillful at identification of meteorological phenomenon including tornadoes and hail in the ERA5 dataset and convective perils, drylines, other high impact weather and atmospheric features in short-range forecasts (Clark et al. 2015; Herman and Schumacher 2018; Gensini et al. 2021; Hill et al. 2020). Random forest algorithms are supervised machine learning models that build decision trees and then average the ensemble results of the decision trees (Breiman 2001). Each node in a decision tree is seeded with random input features from the training data. Decision trees continue branching until training data is exhausted or until a set stopping point is set. Aggregate classification results of each decision tree “vote” on the final classification result, providing the ability to compute statistics for model sensitivity, precision, and accuracy. Output classes for this study include EML, and non-EML. 
 
 Prior to training a random forest classifier, the dataset is split into training, validation, and testing subsets. Since meteorological data has a temporal component, EMLs from one 6-hour time step are generally not independent of EMLs 6 hours later. As such, to ensure the subsets are independent of one another, the dataset needs to be split by time period, rather than randomly. Since the full dataset consists of 10 years of May data, the first seven years are assigned to the training subset (70%), the next year to the validation subset (10%), and the final two years to the testing subset (20%). Ideally, these subsets would have an equal ratio of EML to no EML cases. However, as is, the ratio of EML to non-EML classes ranges from 0.008 for the validation subset to 0.018 for the training subset. Future work will incorporate methods for balancing the EML and non-EML classes in the training and validation datasets. 
@@ -29,14 +32,20 @@ Prior to training a random forest classifier, the dataset is split into training
 
 Since EMLs are relatively rare events, the full dataset contains substantially fewer EML cases than no EML cases (Fig. 2). Within the 2012-2021 dataset, EMLs are most frequent in 2012, 2013, 2014, and 2018 (Fig. 2). Since the goal of the project is to find meaningful environmental parameters that can distinguish between EML and no EML classes, year will not be used as a predictor in the model. The diurnal distribution of EMLs indicates that EMLs are less common in the afternoon and early evening hours (18 and 0 UTC), likely due to the erosion of the EML by convection (Fig. 2). 
 
-![alt text](images/figure_2.jpg)
+![emls in the dataset](images/figure_2.jpg)
 > Figure 2. The number of no EML vs. EML instances in the full dataset (left). The distribution of May EMLs per year (center) and per hour (right). 
 
 In addition to the yearly and diurnal distributions, we examine the distributions of additional features associated with EMLs in the dataset (Fig. 3). Consistent with the literature, EMLs are most frequent in the southern half of the Great Plains in spring, roughly south of 40° N latitude. Vertical profiles associated with EMLs have steep lapse rates, relatively low relative humidity, and sufficient vertical wind shear to support deep, moist convection. Due to the presence of the EML’s capping inversion, many EMLs also have moderate to large MUCIN and fairly high 700 mb temperatures.
 
+![distributions of eml features](images/histograms.png)
+> Figure 3. Histograms of various EML attributes that may be used in the machine learning model. 
+
 To assess which features may be most useful for discriminating between the EML and non EML classes, box plots are used to compare the distributions of various features that may be used in the machine learning model (Fig. 4). Variables that appear to distinguish between the two classes particularly well include 700-500 mb lapse rate, 700 mb temperature, absolute MLCIN and SBCIN, and 700 mb relative humidity. EMLs tend to have steeper mid-level lapse rates, warmer 700 mb temperatures, higher CIN, and lower relative humidity than profiles without an EML. Although there is more overlap between the two labels than for the previous variables, the medians and means of SBCAPE and MLCAPE are fairly different for the two classes, suggesting that these variables may also be useful predictors for the model. 
 
-After training the random forest classifier on the training subset, different model configurations will be tested using the validation subset. The best model configuration, as determined by the best balance of precision and recall, will be selected. The generalizability of the classifier will be assessed using the testing subset. The final model summary will include a discussion of precision, recall, and feature importances. Ranking the features by importance will provide insight into which variables are most useful at classifying EMLs.  
+![distributions of eml features](images/attributes.png)
+> Figure 4. Box plots of potential machine learning model features for EMLs vs. no EMLs. 
+
+After training the random forest classifier on the training subset, different model configurations will be tested using the validation subset. The best model configuration, as determined by the best balance of precision and recall, will be selected. The generalizability of the classifier will be assessed using the testing subset. The final model summary will include a discussion of precision, recall, and feature importances. Ranking the features by importance will provide insight into which variables are most useful at classifying EMLs.
 
 ## IV. Summary
 
