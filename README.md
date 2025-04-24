@@ -90,7 +90,7 @@ Taszarek, M., J. T. Allen, M. Marchio, and H. E. Brooks, 2021: Global climatolog
 ## VI. Appendix
 
 > Table 1. Potential features for use in the machine learning model.
-
+![table of eml features](images/table1.png) 
 
 # Requirements Document
 
