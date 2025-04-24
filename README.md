@@ -140,3 +140,97 @@ We identified the following requirements for this project:
 ```
   N/A
 ```
+
+
+| P03-01  | Identification of appropriate ML tools  
+|---------|------------| 
+| Priority | Medium |
+| Sprint | 1 |
+| Assigned To | Margo, Mackenzie, and Cait |
+| User Story   | As developers we need to select ML tools that are appropriate for classifying vertical profiles as EMLs or not EMLs. |                                                                                                                                       | 
+| Requirements | |
+| | 1. Create a list of ML tools that could be used for gridded data.|
+| | 2. Identify preferred ML tools.|
+| | 3. Xarray or Pandas are compatible with the selected model.|
+| Acceptance Criteria | |
+| | 1. Verify ML tool is compatible with gridded data.|
+| | 2. The list shows a top preferred ML tool and a backup ML tool.|
+| | 3. ML tool successfully reads Xarray or Pandas style data set. |
+| Unit Test | | 
+```
+  N/A
+```
+
+
+| P04-01  | Establish a format for preprocessed data  
+|---------|------------| 
+| Priority | High |
+| Sprint | 1 |
+| Assigned To | Margo and Cait |
+| User Story   | The developers must determine how to organize and format our preprocessed data, such that it will be compatible with our selected machine learning model. |                                                                                                                                       | 
+| Requirements | |
+| | 1. Data works with the chosen ML tool.|
+| | 2. Xarray or Pandas are used to subdivide the data.|
+| | 3. Data must have a time, data, and location associated with each datapoint.|
+| Acceptance Criteria | |
+| | 1. No data errors with ML tool.|
+| | 2. Must be achievable with Xarray or Pandas and the ERA5 data.|
+| | 3. Data contains time, date, latitude, adn longitude columns. |
+| Unit Test | | 
+```
+  N/A
+```
+
+
+| P05-01  | Establish preprocessing workflow  
+|---------|------------| 
+| Priority | High |
+| Sprint | 1 |
+| Assigned To | Margo, Mackenzie, and Cait |
+| User Story   | The developers must establish a workflow for preprocessing our data prior to using the ML tools in order to continue development. |                                                                                                                                       | 
+| Requirements | |
+| | 1. Create a flow chart that displays preprocessing steps.|
+| | 2. The flow chart lists how to process the data.|
+| | 3. Flow chart identifies what python packages and data variables that need processing.|
+| Acceptance Criteria | |
+| | 1. Steps are presented in a flow chart.|
+| | 2. The chart contains all data preprocessing steps.|
+| | 3. Python packages and data variables are relevant and accessible with the ML tool. |
+| Unit Test | | 
+```
+  N/A
+```
+
+| P06-01  | Calculate lapse rates  
+|---------|------------| 
+| Priority | Medium |
+| Sprint | 1 |
+| Assigned To | Margo and Cait |
+| User Story   | As creators of an AI model, we need to calculate lapse rates for multiple levels in the atmosphere, to be used as predictors in our ML model. |                                                                                                                                       | 
+| Requirements | |
+| | 1. Use temperature and height variables from ERA5 dataset. |
+| | 2. Calculates lapse rate for multiple levels.|
+| | 3. Lapse rates are calculated in terms of degrees Celsius per kilometer.|
+| Acceptance Criteria | |
+| | 1. The only data used is ERA5 temperature and height data.|
+| | 2. Unit tests show successful lapse rate calculations for multiple levels.|
+| | 3. Lapse rate must be given in terms of degrees C per kilometer. |
+| Unit Test | | 
+```
+  def test_lapse_rates_calc():
+
+    # Test 700-500 mb lapse rate calculation when given Z in km and T in degrees C 
+
+    lr75 = -(T700 * units.degC - T500 * units.degC) / (Z700 * unit.km - Z500* units.km) 
+
+    assert_almost_equal(lr75, -8.25 * units.degC/km) 
+
+    # Test 2-5 km lapse rate calculation when given Z in km and T in degrees Celsius         
+
+    lr25km = -(T_2km* units.degC – T_5km* units.degC) / (2 * units.km – 5* units.km) 
+
+    print(“All tests have been passed”) 
+```
+
+
+
