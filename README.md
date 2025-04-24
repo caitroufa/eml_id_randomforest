@@ -42,7 +42,7 @@ In addition to the yearly and diurnal distributions, we examine the distribution
 
 To assess which features may be most useful for discriminating between the EML and non EML classes, box plots are used to compare the distributions of various features that may be used in the machine learning model (Fig. 4). Variables that appear to distinguish between the two classes particularly well include 700-500 mb lapse rate, 700 mb temperature, absolute MLCIN and SBCIN, and 700 mb relative humidity. EMLs tend to have steeper mid-level lapse rates, warmer 700 mb temperatures, higher CIN, and lower relative humidity than profiles without an EML. Although there is more overlap between the two labels than for the previous variables, the medians and means of SBCAPE and MLCAPE are fairly different for the two classes, suggesting that these variables may also be useful predictors for the model. 
 
-![distributions of eml features](images/attributes.png)
+![eml attributes](images/attributes.png)
 > Figure 4. Box plots of potential machine learning model features for EMLs vs. no EMLs. 
 
 After training the random forest classifier on the training subset, different model configurations will be tested using the validation subset. The best model configuration, as determined by the best balance of precision and recall, will be selected. The generalizability of the classifier will be assessed using the testing subset. The final model summary will include a discussion of precision, recall, and feature importances. Ranking the features by importance will provide insight into which variables are most useful at classifying EMLs.
@@ -86,6 +86,11 @@ Li, F., D. R. Chavas, K. A. Reed, and D. T. D. Ii, 2020: Climatology of Severe L
 Ribeiro, B. Z., and L. F. Bosart, 2018: Elevated Mixed Layers and Associated Severe Thunderstorm Environments in South and North America. *Monthly Weather Review*, **146**, 3–28, https://doi.org/10.1175/MWR-D-17-0121.1. 
 
 Taszarek, M., J. T. Allen, M. Marchio, and H. E. Brooks, 2021: Global climatology and trends in convective environments from ERA5 and rawinsonde data. *NPJ Clim Atmos Sci*, **4**, 1–11, https://doi.org/10.1038/s41612-021-00190-x. 
+
+## VI. Appendix
+
+> Table 1. Potential features for use in the machine learning model.
+
 
 # Requirements Document
 
