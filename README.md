@@ -284,3 +284,96 @@ We identified the following requirements for this project:
 ```
 
 
+| P09-01  | Calculate MUCAPE and MUCIN 
+|---------|------------| 
+| Priority | Medium |
+| Sprint | 1 |
+| Assigned To | Margo and Cait |
+| User Story   | As developers, we need to calculate most unstable CAPE and CIN using ERA5 to be used as predictors in our ML model. |                                                                                                                                       | 
+| Requirements | |
+| | 1. Use virtual temprature, pressure, mixing ratio, and geopotential height from ERA5 dataset. |
+| | 2. Use MetPy to calculate most unstable CAPE and CIN. |
+| | 3. Most unstable CAPE and CIN are calculated in terms of J/kg.|
+| Acceptance Criteria | |
+| | 1. Must use virtual temperature, pressure, mixing ratio, and geopotential height calculated from ERA5 base variables. |
+| | 2. MetPy successfully calculates most unstable CAPE and CIN without an error. |
+| | 3. Resulting MUCAPE and MUCIN are verified to be in terms of J/kg using unit tests. |
+| Unit Test | | 
+```
+  def test_relative_humidity():        
+   	# Test MUCAPE and MUCIN calculations p in Pa, Tv in K, w in kg/kg, and Z in m 
+    mucape_tv, mucin_tv = calc_cape.mucape_plev(p.values,ds1.tv.values,w.values,Z.values,Z.values[-1,:,:],p.values[-1,:,:],ds1.tv.values[-1,:,:],w.values[-1,:,:]) 
+    assert_almost_equal(mucape_tv, 1293.2 * units.J/kg, 0) 
+    assert_almost_equal(mucin_tv, -103.9 * units.J/kg, 0) 
+    print(‘All tests passed’) 
+```
+
+| P10-01  | Calculate relative humidity at the ERA5 model levels
+|---------|------------| 
+| Priority | Medium |
+| Sprint | 1 |
+| Assigned To | Margo and Cait |
+| User Story   | As developers, we need to calculate relative humidity from the ERA5 dataset. |                                                                                                                                       | 
+| Requirements | |
+| | 1. Use temperature, pressure, and specific humidity from the ERA5 dataset. |
+| | 2. Temperature must be given in Kelvin. Pressure must be given in Pascals. Specific humidity must be given in kilograms/kilogram. |
+| | 3. Use MetPy to calculate relative humidity at each level.|
+| | 4. Units are dimensionless.|
+| Acceptance Criteria | |
+| | 1. Must use ERA5 temperature, pressure, and specific humidity data. |
+| | 2. Temperature, pressure, and specific humidity are verified to have correct units. |
+| | 3. MetPy successfully calculates relative humidity without an error using the unit test. |
+| | 4. Units are verified to be dimensionless.|
+| Unit Test | | 
+```
+  def test_relative_humidity():        
+   	# Test relative humidity calculation given p in Pa, T in K, and q in kg/kg 
+    RH = mpcalc.relative_humidity_from_specific_humidity(p, t, q) * 100 
+    assert_almost_equal(RH, 54.45) 
+```
+
+| P11-01  | Select EML and non-EML cases
+|---------|------------| 
+| Priority | Medium |
+| Sprint | 1 |
+| Assigned To | Margo, Mackenzie, and Cait |
+| User Story   | As developers, we need to select a certain number of EML and non-EML cases to be used as training, validation, and testing data for our ML model. |                                                                                                                                       | 
+| Requirements | |
+| | 1. The dataset has binary EML classification. |
+| | 2. Time periods are used to split trianing, validation, and testing data. EMLs occur in each dataset. |
+| | 3. An equal number of EML and non-EML cases are selected.|
+| Acceptance Criteria | |
+| | 1. Uses binary EML classification. |
+| | 2. Time periods are used to split training, validation, and testing data. EMLs occur in each dataset. |
+| | 3. Pandas filtering is used to verify that EMLs and non-EMLs have an equal number of cases. |
+| Unit Test | | 
+```
+  def test_EML_non_EML_cases(): 
+  
+    # Select a subset of EML and non EML cases and test to make sure there’s an even number of EML and non EML cases 
+    ds_eml = ds.where(ds.eml ==1, drop=True) 
+    ds_no_eml = ds.where(ds.eml==0, drop=True) 
+    
+    # Count the number of EML and non EML causes 
+    eml_count = ds_eml.count 
+    non_eml_count = ds_no_eml.count 
+    assertEqual(eml_count, eml_count) 
+```
+
+
+| P12-01  | Develop Project Workflow
+|---------|------------| 
+| Priority | Medium |
+| Sprint | 1 |
+| Assigned To | Margo, Mackenzie, and Cait |
+| User Story   | As developers, we must define the scope of our project by identifying preprocessing, ML, and testing steps, and incorporating these into a project workflow. |                                                                                                                                       | 
+| Requirements | |
+| | 1. Create a flow chart with preprocessing steps, ML tool steps, and testing steps. |
+| | 2. Identify an estimated time frame for each step. |
+| Acceptance Criteria | |
+| | 1. Steps are presented in a flow chart that incorporates all preprocessing steps, ML steps, and testing steps. |
+| | 2. Each step is achievable in the time we have available to us. |
+| Unit Test | | 
+```
+  N/A 
+```
