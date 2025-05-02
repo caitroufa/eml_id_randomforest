@@ -31,7 +31,7 @@ Prior to training a random forest classifier using Scikit-Learn, the dataset is 
 Next, the training, validation, and testing subsets are compared to one another and to the full dataset. This is done to ensure that the distributions of predictors in each data set are fairly similar. If the distributions of these predictors are very different between subsets, model performance may suffer. A select subset of predictors indicates that while the distributions of the datasets are not identical, they are very similar (Fig. 2).  
 
 
-![subsets_compare](images/figure_2_subsets_compare.jpg)
+![subsets_compare](images/figure_2_subsets_compare.png)
 > Figure 2. Comparing testing, training, and validation data subsets to the full dataset using count per hour, 700-500 mb lapse rate, 700 mb temperature, MUCAPE, MUCIN, 700 mb relative humidity, bulk shear, 2-5 km lapse rate, and 0-3 km lapse rate.
 
 All features (Table 1) are used by the random forest classifier. Training is conducted using the training subset for 11 different model configurations (Table 2). The validation subset is used to assess each configuration’s model performance while tuning hyperparameters. DISCUSS HYPERPARAMETERS HERE... 
