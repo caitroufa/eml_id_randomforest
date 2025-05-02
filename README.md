@@ -104,7 +104,11 @@ Taszarek, M., J. T. Allen, M. Marchio, and H. E. Brooks, 2021: Global climatolog
 ## VI. Appendix
 
 > Table 1. Potential features for use in the machine learning model.
-![table of eml features](images/table_1.png) 
+![table of eml features](images/table_1.png)
+
+
+> Table 2. Random forest classifier model configurations include n estimators, class weight, bootstrap, max depth, max features, and min samples split. Validation accuracy, precision, recall, anf F1-score are reported for non-EML/EML for each configuration.
+![table of eml features](images/table_2_configuration.png) 
 
 # Requirements Document
 
