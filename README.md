@@ -28,7 +28,11 @@ Machine learning algorithms have been explored for use with gridded meteorologic
 
 Prior to training a random forest classifier using Scikit-Learn, the dataset is split into training, validation, and testing subsets. Since meteorological data has a temporal component, EMLs from one 6-hour time step are generally not independent of EMLs 6 hours later. As such, to ensure the subsets are independent of one another, the dataset needs to be split by time period, rather than randomly. Since the full dataset consists of 10 years of May data, the first seven years (2012-2018) are assigned to the training subset (70%), the next year (2019) to the validation subset (10%), and the final two years (2020-2021) to the testing subset (20%). Ideally, these subsets would have an equal ratio of EML to no EML cases. However, as is, the ratio of EML to non-EML classes ranges from 0.008 for the validation subset to 0.018 for the training subset.
 
-Next, the training, validation, and testing subsets are compared to one another and to the full dataset. This is done to ensure that the distributions of predictors in each data set are fairly similar. If the distributions of these predictors are very different between subsets, model performance may suffer. A select subset of predictors indicates that while the distributions of the datasets are not identical, they are very similar (Fig. X).  
+Next, the training, validation, and testing subsets are compared to one another and to the full dataset. This is done to ensure that the distributions of predictors in each data set are fairly similar. If the distributions of these predictors are very different between subsets, model performance may suffer. A select subset of predictors indicates that while the distributions of the datasets are not identical, they are very similar (Fig. 2).  
+
+
+![subsets_compare](images/figure_2_subsets_compare.jpg)
+> Figure 2. Comparing testing, training, and validation data subsets to the full dataset using count per hour, 700-500 mb lapse rate, 700 mb temperature, MUCAPE, MUCIN, 700 mb relative humidity, bulk shear, 2-5 km lapse rate, and 0-3 km lapse rate.
 
 All features (Table 1) are used by the random forest classifier. Training is conducted using the training subset for 11 different model configurations (Table 2). The validation subset is used to assess each configuration’s model performance while tuning hyperparameters. DISCUSS HYPERPARAMETERS HERE... 
 
@@ -37,24 +41,25 @@ The best model configuration, as determined by the best balance of precision and
 ## III. Tentative Results
 ### A. Describing the EML Dataset
 
-Since EMLs are relatively rare events, the full dataset contains substantially fewer EML cases than no EML cases (Fig. 2). Within the 2012-2021 dataset, EMLs are most frequent in 2012, 2013, 2014, and 2018 (Fig. 2). Since the goal of the project is to find meaningful environmental parameters that can distinguish between EML and no EML classes, year will not be used as a predictor in the model. The diurnal distribution of EMLs indicates that EMLs are less common in the afternoon and early evening hours (18 and 0 UTC), likely due to the erosion of the EML by convection (Fig. 2). 
+Since EMLs are relatively rare events, the full dataset contains substantially fewer EML cases than no EML cases (Fig. 3). Within the 2012-2021 dataset, EMLs are most frequent in 2012, 2013, 2014, and 2018 (Fig. 3). Since the goal of the project is to find meaningful environmental parameters that can distinguish between EML and no EML classes, year will not be used as a predictor in the model. The diurnal distribution of EMLs indicates that EMLs are less common in the afternoon and early evening hours (18 and 0 UTC), likely due to the erosion of the EML by convection (Fig. 3). 
 
-![emls in the dataset](images/figure_2.jpg)
-> Figure 2. The number of no EML vs. EML instances in the full dataset (left). The distribution of May EMLs per year (center) and per hour (right). 
+![emls in the dataset](images/figure_3_eml_distribution.jpg)
+> Figure 3. The number of no EML vs. EML instances in the full dataset (left). The distribution of May EMLs per year (center) and per hour (right). 
 
-In addition to the yearly and diurnal distributions, we examine the distributions of additional features associated with EMLs in the dataset (Fig. 3). Consistent with the literature, EMLs are most frequent in the southern half of the Great Plains in spring, roughly south of 40° N latitude. Vertical profiles associated with EMLs have steep lapse rates, relatively low relative humidity, and sufficient vertical wind shear to support deep, moist convection. Due to the presence of the EML’s capping inversion, many EMLs also have moderate to large MUCIN and fairly high 700 mb temperatures.
+In addition to the yearly and diurnal distributions, we examine the distributions of additional features associated with EMLs in the dataset (Fig. 4). Consistent with the literature, EMLs are most frequent in the southern half of the Great Plains in spring, roughly south of 40° N latitude. Vertical profiles associated with EMLs have steep lapse rates, relatively low relative humidity, and sufficient vertical wind shear to support deep, moist convection. Due to the presence of the EML’s capping inversion, many EMLs also have moderate to large MUCIN and fairly high 700 mb temperatures.
 
-![distributions of eml features](images/figure_3_histograms.png)
-> Figure 3. Histograms of various EML attributes that may be used in the machine learning model. 
+![distributions of eml features](images/figure_4_histograms.png)
+> Figure 4. Histograms of various EML attributes that may be used in the machine learning model. 
 
-To assess which features may be most useful for discriminating between the EML and non EML classes, box plots are used to compare the distributions of various features that may be used in the machine learning model (Fig. 4). Variables that appear to distinguish between the two classes particularly well include 700-500 mb lapse rate, 700 mb temperature, absolute MLCIN and SBCIN, and 700 mb relative humidity. EMLs tend to have steeper mid-level lapse rates, warmer 700 mb temperatures, higher CIN, and lower relative humidity than profiles without an EML. Although there is more overlap between the two labels than for the previous variables, the medians and means of SBCAPE and MLCAPE are fairly different for the two classes, suggesting that these variables may also be useful predictors for the model. 
+To assess which features may be most useful for discriminating between the EML and non EML classes, box plots are used to compare the distributions of various features that may be used in the machine learning model (Fig. 5). Variables that appear to distinguish between the two classes particularly well include 700-500 mb lapse rate, 700 mb temperature, absolute MLCIN and SBCIN, and 700 mb relative humidity. EMLs tend to have steeper mid-level lapse rates, warmer 700 mb temperatures, higher CIN, and lower relative humidity than profiles without an EML. Although there is more overlap between the two labels than for the previous variables, the medians and means of SBCAPE and MLCAPE are fairly different for the two classes, suggesting that these variables may also be useful predictors for the model. 
 
-![eml attributes](images/figure_4_attributes.png)
-> Figure 4. Box plots of potential machine learning model features for EMLs vs. no EMLs. 
+![eml attributes](images/figure_5_attributes.png)
+> Figure 5. Box plots of potential machine learning model features for EMLs vs. no EMLs. 
 
 ### B. Assessing the Random Forest Classifier
 
 Results start here...
+
 
 ## IV. Summary
 
