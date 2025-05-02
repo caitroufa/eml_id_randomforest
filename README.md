@@ -13,11 +13,11 @@ Due to the EML’s influence on SCSs, several studies have established EML clima
 ## II. Data and Methods
 
 Data for this project were produced using the European Center for Medium-Range Weather Forecasts Reanalysis Version 5 (ERA5), which has a 0.25-degree grid and 137 vertical levels (Hersbach et al. 2020). Hybrid sigma-level variables include pressure (p), temperature (T), zonal and meridional winds (u, v), specific humidity (q), and geopotential (z). The EML algorithm, developed by Andrews et al. (2024), employs 3-hourly ERA5 data to identify EMLs from 1979-2021, using the following criteria at each grid point:
-1.	MUCAPE > 0 J kg $^−1$
-2.	ELR   8°C km $^−1$ over a minimum depth of 200 hPa
+1.	MUCAPE > 0 J kg $^{−1}$
+2.	ELR   8°C km $^{−1}$ over a minimum depth of 200 hPa
 3.	EML base minimum of 1000 m AGL and below 500 hPa
 4.	Higher RH at EML top (compared to base)
-5.	ELR < 8°C km $^−1$ below EML base
+5.	ELR < 8°C km $^{−1}$ below EML base
 
 Output from this algorithm includes a binary dataset, with values of 1 indicating an EML at a particular time and location, and values of 0 indicating no EML. Using the binary dataset as the label, the machine learning algorithm predicts which class (EML or no EML) a particular grid point belongs to using meteorological variables and parameters calculated with the same ERA5 hybrid-sigma level data (Table 1). Given limitations including computational resources and time, we limit the temporal time frame of the study to the 2012-2021 period, using 6-hourly data from the month of May, when EMLs are most frequent (e.g., Lanicci and Warner 1991). Our domain consists of the central CONUS (Fig. 1), covering the region where the greatest number of EMLs typically occur (e.g., Riberio and Bosart 2018; Andrews et al. 2024). 
 
