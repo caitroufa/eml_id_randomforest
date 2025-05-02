@@ -26,9 +26,16 @@ Output from this algorithm includes a binary dataset, with values of 1 indicatin
 
 Machine learning algorithms have been explored for use with gridded meteorological data. Random forest classifiers have been shown to be skillful at identification of meteorological phenomenon including tornadoes and hail in the ERA5 dataset and convective perils, drylines, other high impact weather and atmospheric features in short-range forecasts (Clark et al. 2015; Herman and Schumacher 2018; Gensini et al. 2021; Hill et al. 2020). Random forest algorithms are supervised machine learning models that build decision trees and then average the ensemble results of the decision trees (Breiman 2001). Each node in a decision tree is seeded with random input features from the training data. Decision trees continue branching until training data is exhausted or until a set stopping point is set. Aggregate classification results of each decision tree “vote” on the final classification result, providing the ability to compute statistics for model sensitivity, precision, and accuracy. Output classes for this study include EML, and non-EML. 
 
-Prior to training a random forest classifier, the dataset is split into training, validation, and testing subsets. Since meteorological data has a temporal component, EMLs from one 6-hour time step are generally not independent of EMLs 6 hours later. As such, to ensure the subsets are independent of one another, the dataset needs to be split by time period, rather than randomly. Since the full dataset consists of 10 years of May data, the first seven years are assigned to the training subset (70%), the next year to the validation subset (10%), and the final two years to the testing subset (20%). Ideally, these subsets would have an equal ratio of EML to no EML cases. However, as is, the ratio of EML to non-EML classes ranges from 0.008 for the validation subset to 0.018 for the training subset. Future work will incorporate methods for balancing the EML and non-EML classes in the training and validation datasets. 
+Prior to training a random forest classifier using Scikit-Learn, the dataset is split into training, validation, and testing subsets. Since meteorological data has a temporal component, EMLs from one 6-hour time step are generally not independent of EMLs 6 hours later. As such, to ensure the subsets are independent of one another, the dataset needs to be split by time period, rather than randomly. Since the full dataset consists of 10 years of May data, the first seven years (2012-2018) are assigned to the training subset (70%), the next year (2019) to the validation subset (10%), and the final two years (2020-2021) to the testing subset (20%). Ideally, these subsets would have an equal ratio of EML to no EML cases. However, as is, the ratio of EML to non-EML classes ranges from 0.008 for the validation subset to 0.018 for the training subset.
 
-## III. Initial Results
+Next, the training, validation, and testing subsets are compared to one another and to the full dataset. This is done to ensure that the distributions of predictors in each data set are fairly similar. If the distributions of these predictors are very different between subsets, model performance may suffer. A select subset of predictors indicates that while the distributions of the datasets are not identical, they are very similar (Fig. X).  
+
+All features (Table 1) are used by the random forest classifier. Training is conducted using the training subset for 11 different model configurations (Table 2). The validation subset is used to assess each configuration’s model performance while tuning hyperparameters. DISCUSS HYPERPARAMETERS HERE... 
+
+The best model configuration, as determined by the best balance of precision and recall, is selected. The generalizability of the classifier is then assessed using the testing subset. The final model summary includes a discussion of precision, recall, and feature importances. Ranking the features by importance provides insight into which variables are most useful at classifying EMLs. 
+
+## III. Tentative Results
+### A. Describing the EML Dataset
 
 Since EMLs are relatively rare events, the full dataset contains substantially fewer EML cases than no EML cases (Fig. 2). Within the 2012-2021 dataset, EMLs are most frequent in 2012, 2013, 2014, and 2018 (Fig. 2). Since the goal of the project is to find meaningful environmental parameters that can distinguish between EML and no EML classes, year will not be used as a predictor in the model. The diurnal distribution of EMLs indicates that EMLs are less common in the afternoon and early evening hours (18 and 0 UTC), likely due to the erosion of the EML by convection (Fig. 2). 
 
@@ -45,7 +52,9 @@ To assess which features may be most useful for discriminating between the EML a
 ![eml attributes](images/figure_4_attributes.png)
 > Figure 4. Box plots of potential machine learning model features for EMLs vs. no EMLs. 
 
-After training the random forest classifier on the training subset, different model configurations will be tested using the validation subset. The best model configuration, as determined by the best balance of precision and recall, will be selected. The generalizability of the classifier will be assessed using the testing subset. The final model summary will include a discussion of precision, recall, and feature importances. Ranking the features by importance will provide insight into which variables are most useful at classifying EMLs.
+### B. Assessing the Random Forest Classifier
+
+Results start here...
 
 ## IV. Summary
 
