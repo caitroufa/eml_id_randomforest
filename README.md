@@ -429,42 +429,26 @@ We identified the following requirements for this project:
 | | 4. Units are verified to be dimensionless.|
 | Unit Test | | 
 ```
-  def test_relative_humidity():        
-   	# Test relative humidity calculation given p in Pa, T in K, and q in kg/kg 
-    RH = mpcalc.relative_humidity_from_specific_humidity(p, t, q) * 100 
+  def test_relative_humidity(p, T, q): 
+  
+    """ 
+    Unit test to ensure relative humidity calculations are correct.  
+    
+    Parameters 
+    ----------  
+    p: float 
+      Pressure in Pa.  
+    T: float 
+     	   Temperature in Kelvin.  
+    q: float 
+     	   Specific humidity in kg/kg.  
+    """ 
+    
+    RH = mpcalc.relative_humidity_from_specific_humidity(p, T, q) * 100 
     assert_almost_equal(RH, 54.45) 
 ```
 
-| P11-01  | Select EML and non-EML cases
-|---------|------------| 
-| Priority | Medium |
-| Sprint | 1 |
-| Assigned To | Margo, Mackenzie, and Cait |
-| User Story   | As developers, we need to select a certain number of EML and non-EML cases to be used as training, validation, and testing data for our ML model. |                                                                                                                                       | 
-| Requirements | |
-| | 1. The dataset has binary EML classification. |
-| | 2. Time periods are used to split trianing, validation, and testing data. EMLs occur in each dataset. |
-| | 3. An equal number of EML and non-EML cases are selected.|
-| Acceptance Criteria | |
-| | 1. Uses binary EML classification. |
-| | 2. Time periods are used to split training, validation, and testing data. EMLs occur in each dataset. |
-| | 3. Pandas filtering is used to verify that EMLs and non-EMLs have an equal number of cases. |
-| Unit Test | | 
-```
-  def test_EML_non_EML_cases(): 
-  
-    # Select a subset of EML and non EML cases and test to make sure there’s an even number of EML and non EML cases 
-    ds_eml = ds.where(ds.eml ==1, drop=True) 
-    ds_no_eml = ds.where(ds.eml==0, drop=True) 
-    
-    # Count the number of EML and non EML causes 
-    eml_count = ds_eml.count 
-    non_eml_count = ds_no_eml.count 
-    assertEqual(eml_count, eml_count) 
-```
-
-
-| P12-01  | Develop Project Workflow
+| P11-01  | Develop Project Workflow
 |---------|------------| 
 | Priority | Medium |
 | Sprint | 1 |
