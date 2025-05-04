@@ -32,7 +32,7 @@ Due to the EML’s influence on SCSs, several studies have established EML clima
 
 Data for this project were produced using the European Center for Medium-Range Weather Forecasts Reanalysis Version 5 (ERA5), which has a 0.25-degree grid and 137 vertical levels (Hersbach et al. 2020). Hybrid sigma-level variables include pressure (p), temperature (T), zonal and meridional winds (u, v), specific humidity (q), and geopotential (z). The EML algorithm, developed by Andrews et al. (2024), employs 3-hourly ERA5 data to identify EMLs from 1979-2021, using the following criteria at each grid point:
 1.	MUCAPE > 0 J kg $^{−1}$
-2.	ELR   8°C km $^{−1}$ over a minimum depth of 200 hPa
+2.	ELR $\geq$ 8 °C km $^{−1}$ over a minimum depth of 200 hPa
 3.	EML base minimum of 1000 m AGL and below 500 hPa
 4.	Higher RH at EML top (compared to base)
 5.	ELR < 8°C km $^{−1}$ below EML base
@@ -45,7 +45,7 @@ Output from this algorithm includes a binary dataset, with values of 1 indicatin
 ![study area domain](images/figure_1_domain.png)
 > Figure 1. The study domain, indicated by the red box. 
 
-Machine learning algorithms have been explored for use with gridded meteorological data. Random forest classifiers have been shown to be skillful at identification of meteorological phenomenon including tornadoes and hail in the ERA5 dataset and convective perils, drylines, other high impact weather and atmospheric features in short-range forecasts (Clark et al. 2015; Herman and Schumacher 2018; Gensini et al. 2021; Hill et al. 2020). Random forest algorithms are supervised machine learning models that build decision trees and then average the ensemble results of the decision trees (Breiman 2001). Each node in a decision tree is seeded with random input features from the training data. Decision trees continue branching until training data is exhausted or until a set stopping point is set. Aggregate classification results of each decision tree “vote” on the final classification result, providing the ability to compute statistics for model sensitivity, precision, and accuracy. Output classes for this study include EML, and non-EML. 
+Machine learning algorithms have been explored for use with gridded meteorological data. Random forest classifiers have been shown to be skillful at identification of meteorological phenomenon including tornadoes and hail in the ERA5 dataset and convective perils, drylines, other high impact weather and atmospheric features in short-range forecasts (Clark et al. 2015; Herman and Schumacher 2018; Gensini et al. 2021; Hill et al. 2020). Random forest algorithms are supervised machine learning models that build decision trees and then average the ensemble results of the decision trees (Breiman 2001). Each node in a decision tree is seeded with random input features from the training data. Decision trees continue branching until training data is exhausted or until a set stopping point is set. Aggregate classification results of each decision tree “vote” on the final classification result, providing the ability to compute statistics for model sensitivity, precision, and accuracy. 
 
 Prior to training a random forest classifier using Scikit-Learn, the dataset is split into training, validation, and testing subsets. Since meteorological data has a temporal component, EMLs from one 6-hour time step are generally not independent of EMLs 6 hours later. As such, to ensure the subsets are independent of one another, the dataset needs to be split by time period, rather than randomly. Since the full dataset consists of 10 years of May data, the first seven years (2012-2018) are assigned to the training subset (70%), the next year (2019) to the validation subset (10%), and the final two years (2020-2021) to the testing subset (20%). Ideally, these subsets would have an equal ratio of EML to no EML cases. However, as is, the ratio of EML to non-EML classes ranges from 0.008 for the validation subset to 0.018 for the training subset.
 
@@ -61,7 +61,7 @@ All features (Table 1) are used by the random forest classifier. Training is con
 
 The best model configuration, as determined by the best balance of validation precision and validation recall, is selected. Incorporating ‘balanced’ and ‘balanced subsample’ class weights had roughly the same impact on validation performance metrics, while increasing and decreasing the n estimators did not change model performance (Table 2). Incrementally increasing max depth decreased precision but increased recall and the F1 score. Ultimately, configuration 11 was selected as it has the highest F1-Score, suggesting the best balance between precision and recall. This model configuration uses ‘balanced_subsample’ for class weight, a max depth of 20, and a minimum samples split of 5. The generalizability of the classifier is then assessed using the testing subset. The final model summary includes a discussion of precision, recall, and feature importances. Ranking the features by importance provides insight into which variables are most useful at classifying EMLs. 
 
-## III. Tentative Results
+## III. Results
 ### A. Describing the EML Dataset
 
 Since EMLs are relatively rare events, the full dataset contains substantially fewer EML cases than no EML cases (Fig. 3). Within the 2012-2021 dataset, EMLs are most frequent in 2012, 2013, 2014, and 2018 (Fig. 3). Since the goal of the project is to find meaningful environmental parameters that can distinguish between EML and no EML classes, year will not be used as a predictor in the model. The diurnal distribution of EMLs indicates that EMLs are less common in the afternoon and early evening hours (18 and 0 UTC), likely due to the erosion of the EML by convection (Fig. 3). 
@@ -72,12 +72,12 @@ Since EMLs are relatively rare events, the full dataset contains substantially f
 In addition to the yearly and diurnal distributions, we examine the distributions of additional features associated with EMLs in the dataset (Fig. 4). Consistent with the literature, EMLs are most frequent in the southern half of the Great Plains in spring, roughly south of 40° N latitude. Vertical profiles associated with EMLs have steep lapse rates, relatively low relative humidity, and sufficient vertical wind shear to support deep, moist convection. Due to the presence of the EML’s capping inversion, many EMLs also have moderate to large MUCIN and fairly high 700 mb temperatures.
 
 ![distributions of eml features](images/figure_4_histograms.png)
-> Figure 4. Histograms of various EML attributes that may be used in the machine learning model. 
+> Figure 4. Histograms of various EML attributes used in the machine learning model. 
 
-To assess which features may be most useful for discriminating between the EML and non EML classes, box plots are used to compare the distributions of various features that may be used in the machine learning model (Fig. 5). Variables that appear to distinguish between the two classes particularly well include 700-500 mb lapse rate, 700 mb temperature, absolute MLCIN and SBCIN, and 700 mb relative humidity. EMLs tend to have steeper mid-level lapse rates, warmer 700 mb temperatures, higher CIN, and lower relative humidity than profiles without an EML. Although there is more overlap between the two labels than for the previous variables, the medians and means of SBCAPE and MLCAPE are fairly different for the two classes, suggesting that these variables may also be useful predictors for the model. 
+To assess which features may be most useful for discriminating between the EML and non EML classes, box plots are used to compare the distributions of various features used in the machine learning model (Fig. 5). Variables that appear to distinguish between the two classes particularly well include 700-500 mb lapse rate, 700 mb temperature, absolute MLCIN and SBCIN, and 700 mb relative humidity. EMLs tend to have steeper mid-level lapse rates, warmer 700 mb temperatures, higher CIN, and lower relative humidity than profiles without an EML. Although there is more overlap between the two labels than for the previous variables, the medians and means of SBCAPE and MLCAPE are fairly different for the two classes, suggesting that these variables may also be useful predictors for the model. 
 
 ![eml attributes](images/figure_5_attributes.png)
-> Figure 5. Box plots of potential machine learning model features for EMLs vs. no EMLs. 
+> Figure 5. Box plots of machine learning model features for EMLs vs. no EMLs. 
 
 ### B. Assessing the Random Forest Classifier
 
@@ -93,9 +93,9 @@ The precision for the no EML class is 1.00, meaning that nearly all the samples 
 
 Like precision, recall is higher for the no EML class compared to the EML class, although the difference in performance between the two classes is smaller. For the no EML class, recall is 0.98, with the model correctly identifying 1,809,529 of the 1,845,773 instances of the no EML label in the dataset. Recall for the EML class is 0.86, since the model correctly labeled 19,207 of the 22,411 EMLs in the testing dataset.
 
-The F1 score considers both precision and recall and is often used for classification problems, particularly when the classes are imbalanced (Freiesleben and Molnar). The F1 score of 0.49 indicates poor performance for the EML class, which has reasonably high recall but low precision. The F1 score for the no EML class is 0.99, since both precision and recall are very high. These results indicate that despite the high accuracy, the model requires adjustments in order to be considered an effective classifier. Of the performance metrics examined, precision and recall are much more appropriate than accuracy for describing the model performance, since they are not biased by the very large number of true negatives in the dataset.  
+The F1 score considers both precision and recall and is often used for classification problems, particularly when the classes are imbalanced (Freiesleben and Molnar 2024). The F1 score of 0.49 indicates poor performance for the EML class, which has reasonably high recall but low precision. The F1 score for the no EML class is 0.99, since both precision and recall are very high. These results indicate that despite the high accuracy, the model requires adjustments in order to be considered an effective classifier. Of the performance metrics examined, precision and recall are much more appropriate than accuracy for describing the model performance, since they are not biased by the very large number of true negatives in the dataset.  
 
-Feature importance ranks the model features in terms of how heavily each influences the model’s predictions. Of the 49 features in the model, 2-5 km lapse rate and 700-500 mb lapse rate are by far the most important, followed by MUCIN, 700 mb temperature, SBCIN, and MUCAPE (Fig. 8). The predictors that are most important to the model make logical sense, as EMLs are defined as layers of steep mid-level lapse rates that typically have a capping inversion, generally indicated by 700 mb temperature and CIN. Additionally, due to the capping inversion, EMLs often have greater CAPE than non EML vertical profiles. The least important feature to the model was hour, which was initially a bit surprising considering spring EML frequencies do vary throughout the day (Andrews et al. 2024). However, using 6-hourly data, the diurnal differences may be less noticeable. Furthermore, while the hour feature may indicate slightly different frequencies of EMLs and non EMLs throughout the day, it likely does not help meaningfully distinguish EML from non EML vertical profiles. Other features indicated as relatively unimportant to the model are 925 mb relative humidity and potential temperature, surface temperature, and 0-3 km SRH. It is not surprising that these features are less important than many others. There is likely a wide range of values for these variables, with little separation in their distributions between the EML and no EML classes.   
+Feature importance ranks the model features in terms of how heavily each influences the model’s predictions. Of the 49 features in the model, 2-5 km lapse rate and 700-500 mb lapse rate are by far the most important, followed by MUCIN, 700 mb temperature, SBCIN, and MUCAPE (Fig. 8). The predictors that are most important to the model make logical sense, as EMLs are defined as layers of steep mid-level lapse rates that typically have a capping inversion, generally indicated by 700 mb temperature and CIN. Additionally, due to the capping inversion, EMLs often have greater CAPE than non EML vertical profiles. The least important feature to the model was hour, which was initially a bit surprising considering spring EML frequencies do vary throughout the day (Andrews et al. 2024). However, while the hour feature may indicate slightly different frequencies of EMLs and non EMLs, it does not help to physically distinguish EML from non EML vertical profiles. Other features indicated as relatively unimportant to the model are 925 mb relative humidity and potential temperature, surface temperature, and 0-3 km SRH. It is not surprising that these features are less important than many others. There is likely a wide range of values for these variables, with little separation in their distributions between the EML and no EML classes.   
 
 ![feature importance](images/figure_8_feature_importance.png)
 > Figure 8. Feature importances in descending order for the random forest classifier with higher importance indicated by a higher importance score.
@@ -285,7 +285,7 @@ We identified the following requirements for this project:
 | | 3. Lapse rate must be given in terms of degrees C per kilometer. |
 | Unit Test | | 
 ```
-  def test_lapse_rate(Z500, Z700, T500, T700):  
+  def test_lapse_rate(AGL_500, AGL_700, T500, T700):  
   
     """ 
     Unit test to ensure the 700-500 mb lapse rate is calculated correctly. 
@@ -293,17 +293,17 @@ We identified the following requirements for this project:
     Parameters 
     ----------  
     
-    Z500: float 
-       The 500 mb geopotential height given in km. 
-    Z700: float 
-       The 700 mb geopotential height given in km. 
+    AGL_500: float 
+       The 500 mb AGL height given in km. 
+    AGL_700: float 
+       The 700 mb AGL given in km. 
     T500: float 
        The 500 mb temperature, given in degrees C.  
     T700: float 
-       The 700 mb temperature, given in degrees C. 
+       The 700 mb temperature, given in degrees C.  
     """ 
     
-    lr75 = - (T700 * units.degC - T500 * units.degC) / (Z700 * units.km - Z500 * units.km)
+    lr75 = - (T700 * units.degC - T500 * units.degC) / (AGL_700 * units.km - AGL_500 * units.km)
 
     assert_almost_equal(lr75, -8.25 * units.degC/km) 
 ```
@@ -336,9 +336,9 @@ We identified the following requirements for this project:
     ----------  
     
     T: float 
-       The 500 mb temperature in degrees Celsius. 
+       The 700 mb temperature in degrees Celsius. 
     p: float 
-     	   The 500 mb pressure in Pascals. 
+     	   The 700 mb pressure in Pascals. 
     Z: float 
        The 700 mb geopotential height in kilometers. 
     """ 
@@ -420,12 +420,12 @@ We identified the following requirements for this project:
        A single vertical profile of geopotential height in meters.  
     """ 
     
-     	mucape_tv, mucin_tv = calc_cape.mucape_plev( 
-        p.values, ds1.tv.values, w.values, Z.values, Z.values[-1,:,:], 
-        p.values[-1,:,:], ds1.tv.values[-1,:,:], w.values[-1,:,:])
+    mucape_tv, mucin_tv = calc_cape.mucape_plev( 
+    p.values, ds1.tv.values, w.values, Z.values, Z.values[-1,:,:], 
+    p.values[-1,:,:], ds1.tv.values[-1,:,:], w.values[-1,:,:])
 
     assert_almost_equal(mucape_tv, 1293.2 * units.J/kg, 0) 
-    assert_almost_equal(mucin_tv, -103.9 * units.J/kg, 0)  
+    assert_almost_equal(mucin_tv, -103.9 * units.J/kg, 0)
     print(‘All tests passed’) 
 ```
 
