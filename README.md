@@ -138,7 +138,7 @@ Taszarek, M., J. T. Allen, M. Marchio, and H. E. Brooks, 2021: Global climatolog
 
 We identified the following requirements for this project:
 
-| P01-01  | Label EML cases in a binary format – `calc_binary(data, dates)`   
+| P01-01  | Label EML cases in a binary format   
 |---------|------------| 
 | Priority | High |
 | Sprint | 1 |
@@ -156,11 +156,18 @@ We identified the following requirements for this project:
 | | 4. The data has metadata that implies the identification of EMLs based on previous literature.|
 | Unit Test | | 
 ```
-  # compare the label output by the EML algorithm to the manual label (0 for non-EML, 1 for EML)  
-  def_test_binary_labels():
-      input_vertical_profile = ds.sel(time='05-01-1994' , latitude=41.9 , longitude=88.7)
-      label = EML_algorithm(input_vertical_profile)
-      assert_equal(label, manual_label) 
+  def test_binary_data(df):  
+  
+    """ 
+    Unit test to ensure that the CSV file containing the EML dataset only
+    contains 0s and 1s for the EML variable. Input is the Pandas DataFrame
+    created using the CSV file.   
+    """ 
+    
+    max_val = df[‘eml’].max() 
+    min_val = df[‘eml’].min() 
+    assert_equal(max_val, 1) 
+    assert_equal(min_val, 0) 
 ```
 
 
@@ -249,7 +256,7 @@ We identified the following requirements for this project:
 | Priority | Medium |
 | Sprint | 1 |
 | Assigned To | Margo and Cait |
-| User Story   | As creators of an AI model, we need to calculate lapse rates for multiple levels in the atmosphere, to be used as predictors in our ML model. |                                                                                                                                       | 
+| User Story   | As creators of an AI model, we need to calculate lapse rates in the atmosphere, to be used as predictors in our ML model. |                                                                                                                                       | 
 | Requirements | |
 | | 1. Use temperature and height variables from ERA5 dataset. |
 | | 2. Calculates lapse rate for multiple levels.|
@@ -260,16 +267,27 @@ We identified the following requirements for this project:
 | | 3. Lapse rate must be given in terms of degrees C per kilometer. |
 | Unit Test | | 
 ```
-  def test_lapse_rates_calc():
+  def test_lapse_rate(Z500, Z700, T500, T700):  
+  
+    """ 
+    Unit test to ensure the 700-500 mb lapse rate is calculated correctly. 
+    
+    Parameters 
+    ----------  
+    
+    Z500: float 
+       The 500 mb geopotential height given in km. 
+    Z700: float 
+       The 700 mb geopotential height given in km. 
+    T500: float 
+       The 500 mb temperature, given in degrees C.  
+    T700: float 
+       The 700 mb temperature, given in degrees C. 
+    """ 
+    
+    lr75 = - (T700 * units.degC - T500 * units.degC) / (Z700 * units.km - Z500 * units.km)
 
-    # Test 700-500 mb lapse rate calculation when given Z in km and T in degrees C 
-    lr75 = -(T700 * units.degC - T500 * units.degC) / (Z700 * unit.km - Z500* units.km) 
     assert_almost_equal(lr75, -8.25 * units.degC/km) 
-
-    # Test 2-5 km lapse rate calculation when given Z in km and T in degrees Celsius         
-    lr25km = -(T_2km* units.degC – T_5km* units.degC) / (2 * units.km – 5* units.km) 
-
-    print(“All tests have been passed”) 
 ```
 
 
@@ -284,18 +302,32 @@ We identified the following requirements for this project:
 | | 2. Must account for the fact that at some locations in the high terrain certain pressure surfaces will be below surface.|
 | | 3. Temperatures are calculated in terms of degrees Celsius.|
 | Acceptance Criteria | |
-| | 1. The only data used in the calculation is ERA5 temperature and pressure data.|
+| | 1. The only data used in the calculation is ERA5 temperature, pressure, and geopotential height data.|
 | | 2. Identifies locations where certain pressure surfaces are below the surface and sets them equal to nan.|
 | | 3. Temperatures must be given in degrees Celsius. |
 | Unit Test | | 
 ```
-  def test_temp_at_p_levels(): 
+  def test_temp_at_p_levs(T, p, Z):  
   
-    # Test calculation of 700 mb temperature at various pressure levels given temperature in Kelvin and pressure in Pascals 
-    T500 = vinterp3d.dinterp3dz(T * units.degC, p*units.Pa , 700.) 
+    """ 
+    Unit test for the 700 mb temperature calculation (interpolation is needed
+    because the data is sigma-level). Any location where 700 mb is below the
+    surface is set to nan. 
     
-    # Set any location where 700 mb is below ground to np.nan 
-    T700[Z700<0.] = np.nan 
+    Parameters 
+    ----------  
+    
+    T: float 
+       The 500 mb temperature in degrees Celsius. 
+    p: float 
+     	   The 500 mb pressure in Pascals. 
+    Z: float 
+       The 700 mb geopotential height in kilometers. 
+    """ 
+    
+    T700 = vinterp3d.dinterp3dz(T * units.degC, p*units.Pa , 700.) 
+          T700[Z700<0.] = np.nan 
+    
     assert_almost_equal(T700, 284.15 * units.Kelvin) 
 ```
 
@@ -315,13 +347,24 @@ We identified the following requirements for this project:
 | | 1. Must use ERA5 temperature and pressure data. |
 | | 2. Temperature and pressure are verified to have correct units. |
 | | 3. MetPy successfully calculates potential temperatures without an error. |
-| | 4. Temperatures are verified to be in terms of Kelvin using unit tests. |
+| | 4. Temperatures are verified to be in terms of Kelvin. |
 | Unit Test | | 
 ```
-  def test_potential_temp_calc(): 
+  def test_potential_temp_calc(p, T): 
   
-    # Test potential temperature calculation given temp in Kelvin and pressure in Pa 
+    """ 
+    Unit test to verify that potential temperature calculation is correct.  
+    
+    Parameters 
+    ----------  
+    p: float 
+       The pressure level (Pa) we’re calculating potential temperature at.  
+    T: float 
+     	   The temperature (K) at the above pressure level.  
+    """ 
+    
     theta = mpcalc.potential_temperature(p * units.Pa, T * units.Kelvin) 
+    
     assert_almost_equal(theta, 295.88 * units.Kelvin, 1) 
 ```
 
@@ -338,15 +381,33 @@ We identified the following requirements for this project:
 | | 3. Most unstable CAPE and CIN are calculated in terms of J/kg.|
 | Acceptance Criteria | |
 | | 1. Must use virtual temperature, pressure, mixing ratio, and geopotential height calculated from ERA5 base variables. |
-| | 2. MetPy successfully calculates most unstable CAPE and CIN without an error. |
-| | 3. Resulting MUCAPE and MUCIN are verified to be in terms of J/kg using unit tests. |
+| | 2. MUCAPE and MUCIN are calculated without an error. |
+| | 3. Resulting MUCAPE and MUCIN are verified to be in terms of J/kg. |
 | Unit Test | | 
 ```
-  def test_relative_humidity():        
-   	# Test MUCAPE and MUCIN calculations p in Pa, Tv in K, w in kg/kg, and Z in m 
-    mucape_tv, mucin_tv = calc_cape.mucape_plev(p.values,ds1.tv.values,w.values,Z.values,Z.values[-1,:,:],p.values[-1,:,:],ds1.tv.values[-1,:,:],w.values[-1,:,:]) 
+  def test_MUCAPE_MUCIN(p, tv, w, Z):  
+  
+    """ 
+    Unit test to ensure that MUCAPE and MUCIN calculations are correct.  
+    
+    Parameters 
+    ----------  
+    p: float 
+       A single vertical profile of pressure in Pa.  
+    tv: float 
+     	   A single vertical profile of pressure virtual temperature in Kelvin.  
+    w: float 
+     	   A single vertical profile of surface mixing ratio in kg/kg. 
+    Z: float 
+       A single vertical profile of geopotential height in meters.  
+    """ 
+    
+     	mucape_tv, mucin_tv = calc_cape.mucape_plev( 
+        p.values, ds1.tv.values, w.values, Z.values, Z.values[-1,:,:], 
+        p.values[-1,:,:], ds1.tv.values[-1,:,:], w.values[-1,:,:])
+
     assert_almost_equal(mucape_tv, 1293.2 * units.J/kg, 0) 
-    assert_almost_equal(mucin_tv, -103.9 * units.J/kg, 0) 
+    assert_almost_equal(mucin_tv, -103.9 * units.J/kg, 0)  
     print(‘All tests passed’) 
 ```
 
