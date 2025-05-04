@@ -21,6 +21,9 @@ Data for this project were produced using the European Center for Medium-Range W
 
 Output from this algorithm includes a binary dataset, with values of 1 indicating an EML at a particular time and location, and values of 0 indicating no EML. Using the binary dataset as the label, the machine learning algorithm predicts which class (EML or no EML) a particular grid point belongs to using meteorological variables and parameters calculated with the same ERA5 hybrid-sigma level data (Table 1). Given limitations including computational resources and time, we limit the temporal time frame of the study to the 2012-2021 period, using 6-hourly data from the month of May, when EMLs are most frequent (e.g., Lanicci and Warner 1991). Our domain consists of the central CONUS (Fig. 1), covering the region where the greatest number of EMLs typically occur (e.g., Riberio and Bosart 2018; Andrews et al. 2024). 
 
+> Table 1. Potential features for use in the machine learning model.
+![table of eml features](images/table_1.png)
+
 ![study area domain](images/figure_1_domain.png)
 > Figure 1. The study domain, indicated by the red box. 
 
@@ -30,11 +33,13 @@ Prior to training a random forest classifier using Scikit-Learn, the dataset is 
 
 Next, the training, validation, and testing subsets are compared to one another and to the full dataset. This is done to ensure that the distributions of predictors in each data set are fairly similar. If the distributions of these predictors are very different between subsets, model performance may suffer. A select subset of predictors indicates that while their distributions are not identical between datasets, they are very similar (Fig. 2).
 
-
 ![subsets_compare](images/figure_2_subsets_compare.png)
 > Figure 2. Comparing testing, training, and validation data subsets to the full dataset using count per hour, 700-500 mb lapse rate, 700 mb temperature, MUCAPE, MUCIN, 700 mb relative humidity, bulk shear, 2-5 km lapse rate, and 0-3 km lapse rate.
 
 All features (Table 1) are used by the random forest classifier. Training is conducted using the training subset for 11 different model configurations (Table 2). The validation subset is used to assess each configuration’s model performance while tuning hyperparameters. Modified hyperparameters include number of estimators, class weight, bootstrap, maximum depth, maximum features, and minimum samples split (Scikit-learn 2025b). The number of estimators sets the number of decision trees in the forest, with more trees improving model accuracy and reducing variance at the expense of computation time. Class weight can adjust the weighting of input classes in the training data to balance classes with fewer cases in the dataset. Bootstrap set to “True” trains each decision tree on a random subset of the training data, while bootstrap set to “False” uses the entire training dataset. The max depth hyperparameter determines the number of levels of each decision tree. Extreme max depth values risk model overfitting (indicated by low recall, F1, and accuracy) and have high compute. Max features determines the number of random features selected for use in each decision tree, and tuning max features can reduce model overfitting and increase compute efficiency. Minimum samples split sets the minimum number of data samples that must be input prior to splitting a node in a decision tree, with higher values reducing overfitting, improving recall, F1, and accuracy. Initial tuning of the aforementioned model hyperparameters is completed using the RandomizedSearchCV and GridSearchCV algorithms; however, due to computation and time constraints, manual tuning of the model is conducted to find the optimal hyperparameters for high accuracy, precision, recall, and F1 score (Scikit-learn 2025a).
+
+> Table 2. Random forest classifier model configurations include n estimators, class weight, bootstrap, max depth, max features, and min samples split. Validation accuracy, precision, recall, and F1-score are reported for non-EML/EML for each configuration.
+![table of eml features](images/table_2_configuration.png) 
 
 The best model configuration, as determined by the best balance of validation precision and validation recall, is selected. Incorporating ‘balanced’ and ‘balanced subsample’ class weights had roughly the same impact on validation performance metrics, while increasing and decreasing the n estimators did not change model performance (Table 2). Incrementally increasing max depth decreased precision but increased recall and the F1 score. Ultimately, configuration 11 was selected as it has the highest F1-Score, suggesting the best balance between precision and recall. This model configuration uses ‘balanced_subsample’ for class weight, a max depth of 20, and a minimum samples split of 5. The generalizability of the classifier is then assessed using the testing subset. The final model summary includes a discussion of precision, recall, and feature importances. Ranking the features by importance provides insight into which variables are most useful at classifying EMLs. 
 
@@ -60,13 +65,22 @@ To assess which features may be most useful for discriminating between the EML a
 
 Model results using the testing data set are comparable or better than results using the validation subset, implying the model can generalize for new data well. Results using the testing subset indicate that the model has high accuracy, predicting the correct label (no EML vs. EML) 98% of the time (Fig 6). However, despite the use of ‘balanced_subsample’ for class weight, the accuracy appears to be biased by the high number of true negatives in the dataset, meaning the number of instances where the model predicts no EML and there is no EML. Because the two classes are so imbalanced, with substantially more ‘no EML’ instances, the model can maximize accuracy by predicting no EML most of the time.  
 
+![classification report](images/figure_6_classification_report.png)
+> Figure 6. Classification report for selected random forest classifier, assessed using the testing subset. The ‘no EML’ class is indicated by 0 and the ‘EML’ class indicated by 1.
+
 The precision for the no EML class is 1.00, meaning that nearly all the samples that the model predicts as no EMLs are actually no EML cases. The confusion matrix reveals that the model predicted no EML 1,812,733 times, with 1,809,529 of those predictions correct (Fig. 7). Precision is much lower for the EML class (0.35). Of the 55,451 instances labeled as ‘EML’ by the model, only 19,207 were correct.  
+
+![confusion matrix](images/figure_7_confusion_matrix.png)
+> Figure 7. The confusion matrix for the random forest classifier, assessed using the testing subset. The ‘no EML’ class is indicated by 0 and the ‘EML’ class is indicated by 1. 
 
 Like precision, recall is higher for the no EML class compared to the EML class, although the difference in performance between the two classes is smaller. For the no EML class, recall is 0.98, with the model correctly identifying 1,809,529 of the 1,845,773 instances of the no EML label in the dataset. Recall for the EML class is 0.86, since the model correctly labeled 19,207 of the 22,411 EMLs in the testing dataset.
 
 The F1 score considers both precision and recall and is often used for classification problems, particularly when the classes are imbalanced (Freiesleben and Molnar). The F1 score of 0.49 indicates poor performance for the EML class, which has reasonably high recall but low precision. The F1 score for the no EML class is 0.99, since both precision and recall are very high. These results indicate that despite the high accuracy, the model requires adjustments in order to be considered an effective classifier. Of the performance metrics examined, precision and recall are much more appropriate than accuracy for describing the model performance, since they are not biased by the very large number of true negatives in the dataset.  
 
 Feature importance ranks the model features in terms of how heavily each influences the model’s predictions. Of the 49 features in the model, 2-5 km lapse rate and 700-500 mb lapse rate are by far the most important, followed by MUCIN, 700 mb temperature, SBCIN, and MUCAPE (Fig. 8). The predictors that are most important to the model make logical sense, as EMLs are defined as layers of steep mid-level lapse rates that typically have a capping inversion, generally indicated by 700 mb temperature and CIN. Additionally, due to the capping inversion, EMLs often have greater CAPE than non EML vertical profiles. The least important feature to the model was hour, which was initially a bit surprising considering spring EML frequencies do vary throughout the day (Andrews et al. 2024). However, using 6-hourly data, the diurnal differences may be less noticeable. Furthermore, while the hour feature may indicate slightly different frequencies of EMLs and non EMLs throughout the day, it likely does not help meaningfully distinguish EML from non EML vertical profiles. Other features indicated as relatively unimportant to the model are 925 mb relative humidity and potential temperature, surface temperature, and 0-3 km SRH. It is not surprising that these features are less important than many others. There is likely a wide range of values for these variables, with little separation in their distributions between the EML and no EML classes.   
+
+![feature importance](images/figure_8_feature_importance.png)
+> Figure 8. Feature importances in descending order for the random forest classifier with higher importance indicated by a higher importance score.
 
 ## IV. Summary
 
@@ -118,14 +132,7 @@ Scikit-learn RandomForestClassifier,. *scikit-learn*. Accessed 4 May 2025b, http
 
 Taszarek, M., J. T. Allen, M. Marchio, and H. E. Brooks, 2021: Global climatology and trends in convective environments from ERA5 and rawinsonde data. *NPJ Clim Atmos Sci*, **4**, 1–11, https://doi.org/10.1038/s41612-021-00190-x. 
 
-## VI. Appendix
-
-> Table 1. Potential features for use in the machine learning model.
-![table of eml features](images/table_1.png)
-
-
-> Table 2. Random forest classifier model configurations include n estimators, class weight, bootstrap, max depth, max features, and min samples split. Validation accuracy, precision, recall, anf F1-score are reported for non-EML/EML for each configuration.
-![table of eml features](images/table_2_configuration.png) 
+## V. Appendix
 
 # Requirements Document
 
