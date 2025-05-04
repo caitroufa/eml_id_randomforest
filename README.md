@@ -2,6 +2,24 @@
 
 Authors: Margo Andrews, Caitlin Roufa, and Mackenzie Garrett
 
+## Data Download
+
+The EML data used for this project was created using sigma-level ERA5 data and the EML algorithm described in Andrews et al. (2024). The entire dataset is contained in one CSV file, with 10 years (2012-2021) of Central CONUS May vertical profiles, classified as EMLs or not EMLs, and the predictors for the random forest classifier. It is available for download at: https://niuits-my.sharepoint.com/:f:/g/personal/z1830295_students_niu_edu/EpAB9uDQ51FNlMh4N-0Z8YcBDfgCsxXvHCHeEB7RVj28-A?e=QS3NdR.  
+
+## Dependencies
+
+These Python packages are required to run the code in this repository. 
+* Pandas 
+* Matplotlib 
+* NumPy 
+* Cartopy 
+* Seaborn 
+* Scikit-learn
+
+## Data Analysis
+
+Jupyter notebooks are provided in the notebooks folder. Notebooks include those used to train the random forest classifier and create the figures below.
+
 ## I. Introduction and Background
 
 The central contiguous United States (CONUS) is one of the most favorable regions for severe convective storms (SCSs) worldwide (Brooks et al. 2003; Taszarek et al. 2021). The elevated mixed layer (EML) is a well-established contributor to the high SCS frequency, influencing storm initiation, intensity, and suppression. EMLs are elevated layers of steep lapse rates with high potential temperature, the bases of which often act as a capping inversion. EMLs begin as hot, dry, well-mixed planetary boundary layers in the high terrain of the desert southwest, northern Mexico, or the Rocky Mountains, and are subsequently advected downstream off the elevated terrain (Carlson and Ludlam 1968; Carlson et al. 1983; Lanicci and Warner 1991). EML frequency peaks just downstream of the high terrain in the warm season, with a maximum over the southern Great Plains and northeastern Mexico in spring, and a lesser, northward displaced maximum over the central and northern Great Plains in summer (Ribeiro and Bosart 2018; Li et al. 2020; Andrews et al. 2024). 
