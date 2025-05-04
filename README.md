@@ -2,11 +2,11 @@
 
 Authors: Margo Andrews, Caitlin Roufa, and Mackenzie Garrett
 
-## Data Download
+### Data Download
 
 The EML data used for this project was created using sigma-level ERA5 data and the EML algorithm described in Andrews et al. (2024). The entire dataset is contained in one CSV file, with 10 years (2012-2021) of Central CONUS May vertical profiles, classified as EMLs or not EMLs, and the predictors for the random forest classifier. It is available for download at: https://niuits-my.sharepoint.com/:f:/g/personal/z1830295_students_niu_edu/EpAB9uDQ51FNlMh4N-0Z8YcBDfgCsxXvHCHeEB7RVj28-A?e=QS3NdR.  
 
-## Dependencies
+### Dependencies
 
 These Python packages are required to run the code in this repository. 
 * Pandas 
@@ -16,7 +16,7 @@ These Python packages are required to run the code in this repository.
 * Seaborn 
 * Scikit-learn
 
-## Data Analysis
+### Data Analysis
 
 Jupyter notebooks are provided in the notebooks folder. Notebooks include those used to train the random forest classifier and create the figures below.
 
